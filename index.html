@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Vera</title>
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/vera.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+    <script src="js/shared.js"></script>
+    <!-- Icons and theme -->
+    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="shortcut icon" href="favicon.ico">
+    <meta name="msapplication-TileColor" content="#222222">
+    <meta name="msapplication-config" content="browserconfig.xml">
+    <meta name="theme-color" content="#222">
+    <!-- Analytics -->
+    <script defer data-domain="edit.vera.app" src="https://plausible.io/js/plausible.js"></script>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-vera fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Vera</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#vera-about-modal">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#vera-keyboard-modal">Shortcuts</a>
+                    </li>
+                </ul>
+                <form class="d-flex d-none d-lg-block">
+                    <button class="btn btn-primary me-2" type="button" data-bs-toggle="modal" data-bs-target="#vera-import-modal" data-backdrop="static" data-keyboard="false" aria-label="Import">
+                        <i class="bi bi-upload"></i>
+                        Upload
+                        <span class="badge bg-dark vera-image-count">0</span>
+                    </button>
+                    <button class="btn btn-primary vera-clear-images-btn me-2" type="button" aria-label="Clear">
+                        <i class="bi bi-trash"></i>
+                        Delete
+                    </button>
+                    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#vera-export-modal" data-backdrop="static" data-keyboard="false" disabled aria-label="Export">
+                        <i class="bi bi-save"></i>
+                        Download
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <!-- Main container -->
+    <div class="container-fluid d-print-none">
+        <div class="row">
+            <!-- Preview container -->
+            <div class="col-lg col-md-6 vera-preview-container">
+                <!-- Temporary text for when no photos are imported -->
+                <div class="card vera-preview-card bg-vera">
+                    <div class="card-body" style="padding: 0">
+                        <div class="text-center" id="vera-editor-preview">
+                            <p><br />A live preview of your photo will be visible here once you upload it.</p>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <small class="text-muted">Limited width: 800px</small>
+                    </div>
+                </div>
+            </div>
+            <!-- Settings panel container -->
+            <div class="col-lg-4 col-md-6">
+                <!-- Safari message -->
+                <div class="alert alert-warning vera-safari-warning" data-bs-toggle="modal" data-bs-target="#vera-safari-modal" style="display: none; cursor: pointer;">
+                    
+                </div>
+                <!-- Resize card -->
+                <div class="card bg-vera mb-3 mt-3 mt-md-0">
+                    <div class="card-header">
+                        Resize
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="vera-image-width" class="form-label">Maximum image width (pixels)</label>
+                            <input type="number" class="form-control vera-preview-update" id="vera-image-width" autocomplete="off" enterkeyhint="done" placeholder="500">
+                        </div>
+                        <div class="mb-3">
+                            <button class="btn btn-primary w-100" type="button" id="vera-reset-image-width-button">Reset image size</button>
+                        </div>
+                        <div class="mb-0">
+                            <label for="vera-resize-unsharp-amount" class="form-label">Sharpness</label>
+                            <input type="number" class="form-control vera-preview-update" id="vera-resize-unsharp-amount" autocomplete="off" value="50" placeholder="50" min="1" max="100" enterkeyhint="done">
+                            <div class="form-text">Choose a value from 1-100. Default: 50</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Advertisements card -->
+                <div class="card bg-vera mb-3">
+                    <div class="card-header">
+                        Updates
+                    </div>
+                    <div class="list-group small">
+                        <a href="#" target="_blank" class="list-group-item list-group-item-action" style="border: 0">Release: v0.1 [Beta] [Test]</a>
+                        <a href="#" target="_blank" class="list-group-item list-group-item-action" style="border: 0">Feedback email: Feedback@vera.tk</a>
+                    </div>
+                    
+                </div>
+                <!-- Watermarks card-->
+                <div class="card bg-vera mb-3">
+                    <div class="card-header">
+                        Watermark
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <select class="form-select vera-preview-update" id="vera-watermark-select" autocomplete="off">
+                                <option selected value="no-watermark">No watermark</option>
+                            </select>
+                        </div>
+                        <div class="mb-0">
+                            <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#vera-watermark-manager-modal">Manage watermarks</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Border card -->
+                <div class="card bg-vera mb-3">
+                    <div class="card-header">
+                        Border
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group">
+                            <input type="number" class="form-control input-group vera-preview-update" placeholder="Border width (px)" id="vera-border-width" autocomplete="off" min="0" enterkeyhint="done">
+                            <input type="color" class="form-control form-control-color input-group vera-preview-update" id="vera-border-color" autocomplete="off" value="#00FF00">
+                        </div>
+                    </div>
+                </div>
+                <!-- Resize card -->
+                <div class="card bg-vera mb-3 mt-3 mt-md-0">
+                    <div class="card-header">
+                        Cropping
+                    </div>
+                    <div class="card-body pt-0 row">
+                        <div class="col-12 col-sm-6 mt-3">
+                            <label for="vera-crop-top" class="form-label">Top</label>
+                            <input type="number" class="form-control vera-preview-update" id="vera-crop-top" autocomplete="off" enterkeyhint="done" value="0">
+                        </div>
+                        <div class="col-12 col-sm-6 mt-3">
+                            <label for="vera-crop-left" class="form-label">Left</label>
+                            <input type="number" class="form-control vera-preview-update" id="vera-crop-left" autocomplete="off" enterkeyhint="done" value="0">
+                        </div>
+                        <div class="col-12 col-sm-6 mt-3">
+                            <label for="vera-crop-right" class="form-label">Right</label>
+                            <input type="number" class="form-control vera-preview-update" id="vera-crop-right" autocomplete="off" enterkeyhint="done" value="0">
+                        </div>
+                        <div class="col-12 col-sm-6 mt-3">
+                            <label for="vera-crop-bottom" class="form-label">Bottom</label>
+                            <input type="number" class="form-control vera-preview-update" id="vera-crop-bottom" autocomplete="off" enterkeyhint="done" value="0">
+                        </div>
+                        <div class="col-12 mt-3">
+                            <small class="form-text text-muted">Enter the number of pixels you want to remove from each side. Cropping occurs before resizing.</small>
+                        </div>
+                    </div>
+                </div>
+                <!-- File options -->
+                <div class="card bg-vera mb-3">
+                    <div class="card-header">
+                        Export
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="vera-file-format">File format</label>
+                            <select class="form-control" id="vera-file-format" autocomplete="on">
+                                <option value="image/jpeg">JPEG (.jpg)</option>
+                                <option value="image/png">Portable Network Graphics (.png)</option>
+                                <option value="image/webp">WebP (.webp)</option>
+                            </select>
+                            <small class="form-text text-muted">Image format support varies by <span class="vera-android-hide">browser</span><span class="vera-android-show">device</span>.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="vera-file-quality">Image quality</label>
+                            <input type="number" class="form-control" id="vera-file-quality" value="92" min="1" max="100" autocomplete="on" enterkeyhint="done">
+                            <small class="form-text text-muted">Choose a value from 1-100.</small>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="vera-file-name" value="vera-file-keep-name" id="vera-file-keep-name">
+                                <label class="form-check-label" for="vera-file-keep-name">
+                                    Keep original file names
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="vera-file-name" value="vera-file-use-pattern" id="vera-file-use-pattern" checked>
+                                <label class="form-check-label" for="vera-file-use-pattern">
+                                    Use pattern for file names
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="vera-file-name-pattern" autocomplete="on" placeholder="Name pattern" enterkeyhint="done">
+                        </div>
+                    </div>
+                </div>
+                <!-- Other options card-->
+                <div class="card bg-vera mb-3">
+                    <div class="card-header">
+                        Miscellaneous
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="vera-exif" checked disabled>
+                            <label class="form-check-label" for="vera-exif">Remove EXIF data</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Import/export toolbar for mobile only -->
+    <div class="vera-mobile-toolbar d-lg-none d-print-none">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-4">
+                    <button class="btn btn-primary w-100" type="button" data-bs-toggle="modal" data-bs-target="#vera-import-modal" data-backdrop="static" data-keyboard="false" aria-label="Import">
+                        <i class="bi bi-upload d-none d-sm-inline"></i>
+                        Upload
+                        <span class="badge bg-dark vera-image-count">0</span>
+                    </button>
+                </div>
+                <div class="col-4">
+                    <button class="btn btn-primary vera-clear-images-btn w-100" type="button" aria-label="Clear">
+                        <i class="bi bi-trash d-none d-sm-inline"></i>
+                        Delete
+                    </button>
+                </div>
+                <div class="col-4">
+                    <button class="btn btn-primary w-100" type="button" data-bs-toggle="modal" data-bs-target="#vera-export-modal" data-backdrop="static" data-keyboard="false" disabled aria-label="Export">
+                        <i class="bi bi-save d-none d-sm-inline"></i>
+                        Download
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Welcome modal -->
+    <div class="modal fade" id="vera-welcome-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-vera">
+                <div class="modal-body">
+                    <div style="text-align: center; margin-bottom: 30px; margin-top: 20px;">
+                        <h2>Welcome to Vera!</h2>
+                    </div>
+                    <p>Welcome to Vera, the free and fast online photo editor.</p>
+                    <p>To get started, click the Upload button at the <span class="d-lg-none">bottom</span><span class="d-none d-lg-inline">top-right</span> to upload some images. When you're ready to save your work, click the Download button.</p>
+                    <p>
+                        <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal" aria-label="Close">Let's go!</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- About modal -->
+    <div class="modal fade" id="vera-about-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-vera">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vera-export-modal-label">About</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div style="text-align: center; margin: 1em 0;">
+                        <h1>Vera</h1>
+                    </div>
+                  
+                    <p>Vera is an online photo editor which helps you to edit photos with some cool modules and you can also add custom watermark to your photos and it's easy to use. [PC ONLY] You can see the shortcuts listed on the shortcut menu to make your editing even more faster.</p>
+                    
+
+                    <div class="vera-android-hide w-100">
+                        <p><a href="mailto:support@veraitor.tk" target="_blank"><button type="button" class="btn btn-primary w-100">Support</button></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Keyboard shortcuts modal -->
+    <div class="modal fade" id="vera-keyboard-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-vera">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vera-export-modal-label">Keyboard shortcuts</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Vera offers keyboard shortcuts for common functions. These may not work <span class="vera-android-hide">with all browsers</span><span class="vera-android-show">on all devices</span>. Also, they will not work if any popups (like the watermark editor or this help menu) are open.</p>
+                    <p>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Command</th>
+                                <th scope="col">Shortcut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Import local images</td>
+                                <td>Shift + O</td>
+                            </tr>
+                            <tr>
+                                <td>Import images from Dropbox</td>
+                                <td>Shift + D</td>
+                            </tr>
+                            <tr>
+                                <td>Clear imported images</td>
+                                <td>Shift + X</td>
+                            </tr>
+                            <tr>
+                                <td>Open watermarks</td>
+                                <td>Shift + W</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Safari storage help modal -->
+    <div class="modal fade" id="vera-safari-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content bg-vera">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vera-safari-modal-label">Important info for Safari</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Safari 13.1+ on macOS, as well as Safari on iOS/iPadOS 13.4+, introduced a <a href="https://webkit.org/blog/10218/full-third-party-cookie-blocking-and-more/" target="_blank">seven-day cap on all locally-stored data</a> by websites. This means that unless you open Vera at least once a week, <b>your saved watermarks could be deleted</b>.</p>
+                    <p>The only way to avoid losing your watermarks is to export them as files (from the watermark list), then re-import them after Safari wipes Vera's data.</p>
+                    <p>In addition, Vera may not be able to download files (completed images, exported watermarks, etc.) when it is opened from the iOS home screen. To get around this in your browser instead.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Import modal -->
+    <div class="modal fade" id="vera-import-modal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-vera">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vera-export-modal-label">Import images</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Select photos from your device or the web to get started. You can also drag and drop files into Vera to import them.</p>
+                    <p>
+                        <button class="btn btn-primary w-100 vera-import-file-btn" type="button" data-bs-dismiss="modal">Import local files</button>
+                    </p>
+                    <p style="text-align: center" class="small">Supported file types: Images, ZIP, MS Office 2007+</p>
+                    <p>
+                        <button class="btn btn-primary w-100 vera-import-dropbox-btn" type="button" data-bs-dismiss="modal">Import images from Dropbox</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Drag and drop modal -->
+    <div class="modal fade" id="vera-drag-modal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-vera">
+                <div class="modal-body">
+                    <div class="modal-body">
+                        <p style="text-align: center" class="lead">Drop your files to import them.</p>
+                        <p style="text-align: center" class="text-muted">Supported file types: Images, ZIP, MS Office 2007+</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Export modal -->
+    <div class="modal fade" id="vera-export-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <!-- Initial UI -->
+            <div class="modal-content bg-vera vera-export-modal-initial">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vera-export-modal-label">Download images</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="text-align: center">
+                        <b>You are about to Download <span class="vera-image-count">0</span> images.</b>
+                    </p>
+                    <p>
+                        <button type="button" id="vera-start-export-btn" class="btn w-100 btn-primary">Start Download</button>
+                    </p>
+                </div>
+            </div>
+            <!-- Export in progress modal -->
+            <div class="modal-content bg-vera vera-export-modal-loading" style="display:none">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vera-export-modal-label">Download images</h5>
+                </div>
+                <div class="modal-body">
+                    <p style="text-align: center;">Please wait while the images are being downloaded...</p>
+                    <p>
+                    <div class="progress" style="height: 20px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%" id="vera-export-modal-progress"></div>
+                    </div>
+                    </p>
+                    <p class="vera-android-hide text-muted" style="text-align: center;">
+                        Some browsers throttle background windows and tabs. To speed up exports, don't minimize Vera or switch to another tab/window.
+                    </p>
+                </div>
+            </div>
+            <!-- Completed export modal -->
+            <div class="modal-content bg-vera vera-export-modal-finished" style="display:none">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vera-export-modal-label">Download images</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="vera-legacy-download">
+                        <p>
+                            <button type="button" id="vera-export-separate-button" class="btn w-100 btn-primary">Save images to Downloads</button>
+                        </p>
+                        <p class="text-muted vera-android-hide" style="text-align:center">Saving images to Downloads doesn't work correctly in some browsers. If you experience problems, use one of the other options.</p>
+                    </div>
+                    <p>
+                        <button type="button" id="vera-export-filesystem-api-button" class="btn w-100 btn-primary">Save images to device</button>
+                    </p>
+                    <p>
+                        <button type="button" id="vera-export-web-share-button" class="btn w-100 btn-primary">Share images to installed application</button>
+                    </p>
+                    <p>
+                        <button type="button" id="vera-export-zip-button" class="btn w-100 btn-primary">Save images as ZIP</button>
+                    </p>
+                  
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Watermark manager modal -->
+    <div class="modal fade" id="vera-watermark-manager-modal" tabindex="-1" role="dialog" aria-labelledby="#vera-watermark-manager-modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+            <div class="modal-content bg-vera">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vera-watermark-manager-modal-title">Watermarks</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Watermarks stored in your <span class="vera-android-hide">browser</span><span class="vera-android-show">device</span> are displayed here. You can transfer them to other devices or browsers by exporting the watermarks to a file and importing them on another device/browser.</p>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-6" style="padding-left: 0">
+                                <button type="button" id="vera-watermark-new-btn" class="btn btn-primary w-100">New watermark</button>
+                            </div>
+                            <div class="col-6" style="padding-right: 0">
+                                <button type="button" id="vera-watermark-import-btn" class="btn btn-primary w-100">Upload from file</button>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="list-group list-group-flush" id="vera-watermark-manager-list" role="tablist">
+                        <!-- This is populated by editor.js -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Watermark editor modal -->
+    <div class="modal fade" id="vera-watermark-editor-modal" tabindex="-1" role="dialog" aria-labelledby="#vera-watermark-editor-modal-title" aria-hidden="true">
+        <input type="file" id="vera-watermark-import-image" accept="image/jpeg,image/png,image/gif">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+            <div class="modal-content bg-vera">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vera-watermark-editor-modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding-left: 0; padding-right: 0">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <!-- Preview row -->
+                            <div class="col-12 col-sm-6">
+                                <img src="" id="vera-watermark-editor-preview">
+                            </div>
+                            <!-- Watermark settings row -->
+                            <div class="col-12 col-sm-6">
+                                <!-- Image import -->
+                                <div class="mb-3">
+                                    <button class="btn btn-primary w-100" type="button" id="vera-watermark-editor-image-btn">Select image</button>
+                                </div>
+                                <!-- Anchor position -->
+                                <div class="form-label mb-3">Anchor position</div>
+                                <div class="row mb-3">
+                                    <div class="col-4">
+                                        <button type="button" class="btn w-100 btn-secondary vera-anchor-btn" id="vera-watermark-pos-1">1</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" class="btn w-100 btn-secondary vera-anchor-btn" id="vera-watermark-pos-2">2</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" class="btn w-100 btn-secondary vera-anchor-btn" id="vera-watermark-pos-3">3</button>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-4">
+                                        <button type="button" class="btn w-100 btn-secondary vera-anchor-btn" id="vera-watermark-pos-4">4</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" class="btn w-100 btn-primary vera-anchor-btn" id="vera-watermark-pos-5">5</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" class="btn w-100 btn-secondary vera-anchor-btn" id="vera-watermark-pos-6">6</button>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-4">
+                                        <button type="button" class="btn w-100 btn-secondary vera-anchor-btn" id="vera-watermark-pos-7">7</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" class="btn w-100 btn-secondary vera-anchor-btn" id="vera-watermark-pos-8">8</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" class="btn w-100 btn-secondary vera-anchor-btn" id="vera-watermark-pos-9">9</button>
+                                    </div>
+                                </div>
+                                <!-- Effects -->
+                                <div class="form-label mb-3">Effects</div>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">Size</span>
+                                    <input type="number" class="form-control" min="0" max="100" aria-label="Size" id="vera-watermark-size" value="30" autocomplete="off" enterkeyhint="done">
+                                </div>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">Opacity</span>
+                                    <input type="number" class="form-control" min="0" max="100" aria-label="Size" id="vera-watermark-opacity" value="50" autocomplete="off" enterkeyhint="done">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="vera-watermark-horizontal-inset" class="form-label">Horizontal inset</label>
+                                    <input type="range" class="form-range" autocomplete="off" id="vera-watermark-horizontal-inset" min="-10" max="10" value="0" enterkeyhint="done">
+                                    <label for="vera-watermark-vertical-inset" class="form-label">Vertical inset</label>
+                                    <input type="range" class="form-range" autocomplete="off" id="vera-watermark-vertical-inset" min="-10" max="10" value="0" enterkeyhint="done">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Discard changes</button>
+                    <button type="button" class="btn btn-primary" id="vera-watermark-editor-save-btn">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Import toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <!-- Import toast -->
+        <div id="vera-import-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body">
+                <div class="d-flex align-items-center">
+                    <strong>Importing photos...</strong>
+                    <div class="spinner-border spinner-border-sm ms-auto" role="status" aria-hidden="true"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Error toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <!-- Import toast -->
+        <div id="vera-error-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Error :(</strong>
+            </div>
+            <div class="toast-body">
+                There was an error, please try that again in a few seconds or reload Vera.
+            </div>
+        </div>
+    </div>
+    <!-- Print UI -->
+    <div class="d-none d-print-block">
+        <img id="vera-print-preview">
+    </div>
+    <!-- File pickers -->
+    <input type="file" id="vera-import-file" multiple accept="image/jpeg,image/png,image/gif,image/bmp,application/zip,application/x-zip,application/x-zip-compressed,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.wordprocessingml.template,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.spreadsheetml.template,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.presentationml.template,application/vnd.openxmlformats-officedocument.presentationml.slideshow">
+    <input type="file" id="vera-watermark-file-import" multiple accept=".json">
+    <!-- Container where original photos are kept as <img> elements -->
+    <div id="vera-original-container" aria-hidden="true"></div>
+    <!-- Container where canvas elements for each image are kept -->
+    <div id="vera-canvas-container" aria-hidden="true"></div>
+    <!-- Watermark image cache -->
+    <img id="vera-watermark-cache">
+    <!-- Scripts -->
+    <script src="js/modernizr-custom.js"></script> <!-- canvas.toDataURL + Promises + WebP check -->
+    <script src="js/array-flat-polyfill.js"></script> <!-- Polyfill for Array.prototype.flat() -->
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.6.0/dist/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/localforage@1.9.0/dist/localforage.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pica@6.1/dist/pica.min.js"></script>
+    <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="sblxtzuush1cfzz"></script>
+    <script src="js/editor.js"></script>
+    <script src="js/register-sw.js"></script>
+    <!-- PhotoStack Classic redirects -->
+    <script>
+        // All IE versions
+        if (window.navigator.userAgent.match(/(MSIE|Trident)/)) {
+            window.location.replace('https://veraitor.tk')
+        }
+        // Browsers that fail feature checks
+        var storageCheck = (localforage.supports(localforage.INDEXEDDB) || localforage.supports(localforage.WEBSQL))
+        if ((!(Modernizr.promises && storageCheck)) && (localStorage['android-app'] != 'true')) {
+            window.location.replace('https://veraitor.tk')
+        }
+
+    </script>
+</body>
+
+</html>
